@@ -70,3 +70,37 @@ class TestVoid(unittest.TestCase):
     def test_center02(self):
         f = Facet([R3(0.0, 0.0, 0.0), R3(3.0, 0.0, 0.0), R3(0.0, 3.0, 0.0)])
         self.assertEqual(R3ApproxMatcher(f.center()), (R3(1.0, 1.0, 0.0)))
+
+    # Центр грани «хорошая» точка, а вершины грани «плохие» точки:
+    # грань «плохая»
+    def test_is_good_facet01(self):
+        f = Facet([R3(2.0, 1.0, 1.0), R3(1.0, -2.0, 1.0),
+                   R3(-1.0, -1.0, 2.0), R3(-1.0, 1.0, 2.0)])
+        # center (0.25, -0.25, 1.5)
+        self.assertFalse(f.is_good_facet())
+
+    # Центр грани и ее вершины «хорошие» точки:
+    # грань «хорошая»
+    def test_is_good_facet02(self):
+        f = Facet([R3(1.0, 1.0, 1.0), R3(1.0, -1.0, 1.0),
+                   R3(-1.0, -1.0, 1.0), R3(-1.0, 1.0, 1.1)])
+        # center (0.0, 0.0, 1.025)
+        self.assertTrue(f.is_good_facet())
+
+    # Площадь «хорошего» четырехугольника
+    def test_area01(self):
+        f = Facet([R3(1.0, 1.0, 1.0), R3(1.0, -1.0, 1.0),
+                   R3(-1.0, -1.0, 1.0), R3(-1.0, 1.0, 1.0001)])
+        self.assertAlmostEqual(f.area(), 4.0)
+
+    # Площадь «хорошего» треугольника
+    def test_area02(self):
+        f = Facet([R3(1.0, 1.0, 1.0), R3(1.0, -1.0, 1.0),
+                   R3(-1.0, -1.0, 1.0)])
+        self.assertAlmostEqual(f.area(), 2.0)
+
+    # Сумма площадей «хороших» граней
+    def test_sum_area(self):
+        f = Facet([R3(1.0, 1.0, 1.0), R3(1.0, -1.0, 1.0),
+                   R3(-1.0, -1.0, 1.0)])
+        self.assertAlmostEqual(f.sum_area(), 2.0)
