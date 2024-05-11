@@ -108,3 +108,23 @@ class TestR3(unittest.TestCase):
     def test_cross04(self):
         self.assertEqual(R3ApproxMatcher(self.a.cross(R3(3.0, -2.0, 1.0))),
                          R3(8.0, 8.0, -8.0))
+
+    # Точка в пространстве «хорошая»
+    def test_is_good1(self):
+        a = R3(1.0, 1.0, 1.0)
+        self.assertTrue(a.is_good())
+
+    # Точка в пространстве «плохая»
+    def test_is_good2(self):
+        a = R3(0.0, 0.0, 0.0)
+        self.assertFalse(a.is_good())
+
+    # Площадь треугольника равна нулю, если все вершины совпадают
+    def test_area1(self):
+        a = R3(1.0, 1.0, 1.0)
+        self.assertAlmostEqual(R3.area(a, a, a), 0.0)
+
+    # Площадь треугольника равна нулю, если все вершины лежат на одной прямой
+    def test_area2(self):
+        a, b, c = R3(0.0, 0.0, 0.0), R3(1.0, 1.0, 0.0), R3(2.0, 2.0, 0.0)
+        self.assertAlmostEqual(R3.area(a, b, c), 0.0)
