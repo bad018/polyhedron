@@ -36,3 +36,7 @@ class TestPolyedr(unittest.TestCase):
 
     def test_num_edges(self):
         self.assertEqual(len(self.polyedr.edges), 16)
+
+    # Сумма площадей «хороших» граней
+    def test_sum_area(self):
+        self.assertEqual(self.polyedr.sum_area(), 0.0)
