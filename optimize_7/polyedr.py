@@ -95,6 +95,7 @@ class Facet:
 
     def __init__(self, vertexes):
         self.vertexes = vertexes
+        self._area = 0.0
 
     # «Вертикальна» ли грань?
     def is_vertical(self):
@@ -113,6 +114,26 @@ class Facet:
     # Центр грани
     def center(self):
         return self._center
+
+    # «Хорошая» ли грань?
+    # У «хорошей» грани центр и все вершины — «хорошие» точки
+    def is_good_facet(self):
+        center = self.center()
+        if center.is_good():
+            for vertex in self.vertexes:
+                if not vertex.is_good():
+                    return False
+            return True
+        else:
+            return False
+
+    # Площадь «хорошей» грани
+    def area(self):
+        return self._area
+
+    # Сумма площадей «хороших» граней равна площади текущей грани
+    def sum_area(self):
+        return self.area()
 
     # Предкомпиляция грани
     def precompile(self):
@@ -147,6 +168,8 @@ class Polyedr:
 
         # списки вершин, рёбер и граней полиэдра
         self.vertexes, self.edges, self.facets = [], [], []
+        # изначально сумма площадей «хороших» граней равна нулю
+        self._sum_area = 0.0
 
         # список строк файла
         with open(file) as f:
@@ -173,6 +196,10 @@ class Polyedr:
                     size = int(buf.pop(0))
                     # массив вершин этой грани
                     vertexes = list(self.vertexes[int(n) - 1] for n in buf)
+                    facet = Facet(vertexes)
+                    # добавляем к сумме площадей «хороших» граней
+                    # площадь очередной грани
+                    self._sum_area += facet.area()
                     # задание рёбер грани
                     for n in range(size):
                         self.edges.append(Edge(vertexes[n - 1], vertexes[n]))
@@ -226,6 +253,11 @@ class Polyedr:
         for e in self.edges:
             self.smart_shadow(e)
         return self
+
+    # Сумма площадей граней,
+    # центр и все вершины которой - «хорошие» точки
+    def sum_area(self):
+        return self._sum_area
 
     # Метод изображения полиэдра
     def draw(self, tk):
