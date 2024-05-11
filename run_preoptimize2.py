@@ -30,6 +30,8 @@ try:
         poly.draw(tk)
         tk.root.update()
         print("%6.2f сек." % (time() - start_draw_time))
+        print(f"Сумма площадей «хороших» граней полиэдра '{name}':"
+              f"{poly.sum_area()}")
         input("Hit 'Return' to continue -> ")
 except (EOFError, KeyboardInterrupt):
     print("\nStop")
