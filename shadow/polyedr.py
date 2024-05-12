@@ -157,6 +157,9 @@ class Polyedr:
 
         # списки вершин, рёбер и граней полиэдра
         self.vertexes, self.edges, self.facets = [], [], []
+        # список вершин полиэдра без учёта коэффициента гомотетии
+        # и вращения пространства
+        self.points = []
         # изначально сумма площадей «хороших» граней равна нулю
         self._sum_area = 0.0
 
@@ -178,6 +181,9 @@ class Polyedr:
                     x, y, z = (float(x) for x in line.split())
                     self.vertexes.append(R3(x, y, z).rz(
                         alpha).ry(beta).rz(gamma) * c)
+                    # задание всех вершин полиэдра
+                    # без учёта коэффициента гомотетии и вращения пространства
+                    self.points.append(R3(x, y, z))
                 else:
                     # вспомогательный массив
                     buf = line.split()
@@ -185,15 +191,15 @@ class Polyedr:
                     size = int(buf.pop(0))
                     # массив вершин этой грани
                     vertexes = list(self.vertexes[int(n) - 1] for n in buf)
-                    facet = Facet(vertexes)
-                    # добавляем к сумме площадей «хороших» граней
-                    # площадь этой грани
-                    self._sum_area += facet.area()
+                    points = list(self.points[int(n) - 1] for n in buf)
                     # задание рёбер грани
                     for n in range(size):
                         self.edges.append(Edge(vertexes[n - 1], vertexes[n]))
                     # задание самой грани
                     self.facets.append(Facet(vertexes))
+                    # добавляем к сумме площадей «хороших» граней
+                    # площадь этой грани
+                    self._sum_area += Facet(points).area()
 
     # Сумма площадей граней,
     # центр и все вершины которой - «хорошие» точки
