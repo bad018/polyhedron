@@ -111,4 +111,3 @@ class Polyedr:
         tk.clean()
         for e in self.edges:
             tk.draw_line(e.beg, e.fin)
-
